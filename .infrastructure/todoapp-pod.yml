@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: todoapp
+  namespace: todoapp
+  labels:
+    app: todoapp
+spec:
+  containers:
+    - name: todoapp
+      image: dmytrykell/todoapp:3.0.0
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 8000
+      readinessProbe:
+        httpGet:
+          path: /api/readiness/
+          port: 8000
+        initialDelaySeconds: 10
+        periodSeconds: 5
+      livenessProbe:
+        httpGet:
+          path: /api/liveness/
+          port: 8000
+        initialDelaySeconds: 20
+        periodSeconds: 10

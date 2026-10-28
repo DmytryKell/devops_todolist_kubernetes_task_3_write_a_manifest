@@ -1,12 +1,23 @@
 from django.contrib.auth.models import User
+from django.db import connection
+from django.http import JsonResponse
 from rest_framework import permissions, viewsets
 
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
 from lists.models import Todo, TodoList
 
-from django.http import HttpResponse
-from django.utils import timezone
-import time
+def readiness(request):
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        return JsonResponse({"status": "ok"}, status=200)
+    except Exception:
+        return JsonResponse({"status": "error"}, status=500)
+
+
+def liveness(request):
+    return JsonResponse({"status": "ok"}, status=200)
+
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
